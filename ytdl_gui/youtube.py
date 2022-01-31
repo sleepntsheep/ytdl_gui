@@ -45,4 +45,3 @@ def validate_link(url: str):
 def convert_link(url: str):
     id: str = re.search(r"(?:\?v=|v\/|embed\/|youtu\.be\/)([\w\-]+)", url).group(1)
     return id
-    print(id)

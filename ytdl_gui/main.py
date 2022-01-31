@@ -5,18 +5,29 @@ from typing import Dict, List
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import GObject
-from gi.repository import Gtk, Gio
+from gi.repository import Gtk, Gio, Gdk
 
 from ytdl_gui.youtube import YTDL_Controller, validate_link, convert_link
 from ytdl_gui.dialog import SelectFolder
 from ytdl_gui.const import *
 
+def add_class(widget, class_name: str):
+    context = widget.get_style_context()
+    context.add_class(class_name)
+
 class Window(Gtk.Window):
     def __init__(self):
-        Gtk.Window.__init__(self, title="Youtube Downloader")
+        Gtk.Window.__init__(self, title=TITLE)
         self.set_default_size(WIDTH, HEIGHT)
         self.controller = YTDL_Controller(self)
         self.savepath = os.path.expanduser('~')
+
+        header_bar = Gtk.HeaderBar()
+        header_bar.set_name('header_bar')
+        header_bar.set_show_close_button(True)
+        header_bar.props.title = TITLE
+
+        self.set_titlebar(header_bar)
 
         GObject.signal_new('hook', self, GObject.SignalFlags.RUN_LAST,
                            GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,))
@@ -27,7 +38,7 @@ class Window(Gtk.Window):
         savepath_button = Gtk.Button(label='Save path')
         savepath_button.connect('clicked', self.select_savepath)
 
-        self.formats = {'Best Audio + Video': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio', 'Best': 'best', 'Best Video': 'bestvideo', 'Best Audio': 'bestaudio', 'Worst': 'worst', 'Worst Video': 'worstvideo', 'Worst Audio': 'worstaudio', 'Worst vid + Best Audio': 'worstvideo[ext=mp4]+bestaudio[ext=m4a]/worstvideo+bestaudio', 'Best vid + Worst Audio': 'bestvideo[ext=mp4]+worstaudio[ext=m4a]/bestvideo+worstaudio',}
+        self.formats = {'Best Audio + Video': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio', 'Best': 'best', 'Best Video': 'bestvideo[ext=mp4]/bestvideo', 'Best Audio (m4a)': 'bestaudio[ext=m4a]/bestaudio', 'Best Audio (mp3)': 'bestaudio[ext=mp3]/bestaudio', 'Worst': 'worst', 'Worst Video': 'worstvideo[ext=mp4]/worstvideo', 'Worst Audio': 'worstaudio[ext=mp3]/worstaudio', 'Worst vid + Best Audio': 'worstvideo[ext=mp4]+bestaudio[ext=m4a]/worstvideo+bestaudio', 'Best vid + Worst Audio': 'bestvideo[ext=mp4]+worstaudio[ext=m4a]/bestvideo+worstaudio',}
         self.format_dropdown = Gtk.ComboBoxText()
         for format_text in self.formats.keys():
             self.format_dropdown.append(format_text, format_text)
@@ -59,6 +70,12 @@ class Window(Gtk.Window):
 
         self.url_entry = Gtk.Entry()
         self.status_lbl = Gtk.Label(label='Press download to start downloading')
+
+        add_class(download_button, 'rounded-margin')
+        add_class(savepath_button, 'rounded-margin')
+        add_class(add_url_button, 'rounded-margin')
+        add_class(self.url_entry, 'rounded-margin')
+        add_class(self.format_dropdown, 'rounded-margin')
 
         box.pack_start(savepath_button, False, False, 0)
         box.pack_start(self.url_entry, False, False, 0)
@@ -106,10 +123,15 @@ class App(Gtk.Application):
     def __init__(self):
         Gtk.Application.__init__(
             self, application_id='app.test.id', flags=Gio.ApplicationFlags.FLAGS_NONE)
+        self.provider = Gtk.CssProvider()
+        self.provider.load_from_path(CSSPATH)
+        self.screen = Gdk.Screen.get_default()
         self.connect('activate', self.on_activate)
+
 
     def on_activate(self, *_data):
         self.window = Window()
+        Gtk.StyleContext.add_provider_for_screen(self.screen, self.provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         self.add_window(self.window)
 
 
