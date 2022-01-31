@@ -58,8 +58,7 @@ class Window(Gtk.Window):
         add_url_button.connect('clicked', self.add_url)
 
         self.url_entry = Gtk.Entry()
-        self.status_lbl = Gtk.Label(
-            label='Press download to start downloading')
+        self.status_lbl = Gtk.Label(label='Press download to start downloading')
 
         box.pack_start(savepath_button, False, False, 0)
         box.pack_start(self.url_entry, False, False, 0)
