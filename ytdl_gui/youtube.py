@@ -1,6 +1,8 @@
 import re
 import threading
 from yt_dlp import YoutubeDL
+import yt_dlp
+import hashlib, base64
 
 class YTDL_Controller():
     def __init__(self, window):
@@ -23,8 +25,12 @@ class YTDL_Controller():
             print(msg)
 
     def download(self, url: str, formats: str, savepath: str):
-        with YoutubeDL({**self.ydl_opts, 'progress_hooks': [self.hook], 'format': formats, 'outtmpl': f'{savepath}/%(title)s.%(ext)s'}) as ydl:
-            ydl.download([url])
+        try:
+            with YoutubeDL({**self.ydl_opts, 'progress_hooks': [self.hook], 'format': formats, 'outtmpl': f'{savepath}/%(title)s.%(ext)s'}) as ydl:
+                ydl.download([url])
+        except:
+            with YoutubeDL({**self.ydl_opts, 'progress_hooks': [self.hook], 'format': formats, 'outtmpl': f'{savepath}/%(id)s.%(ext)s'}) as ydl:
+                ydl.download([url])
 
     def download_threaded(self, url: str, formats: str = 'bestvideo+bestaudio/best', savepath: str = '.'):
         thread = threading.Thread(

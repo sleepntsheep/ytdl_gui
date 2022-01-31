@@ -3,7 +3,7 @@ import sys
 from typing import Dict, List
 
 import gi
-gi.require_version("Gtk", "4.0")
+gi.require_version("Gtk", "3.0")
 from gi.repository import GObject
 from gi.repository import Gtk, Gio
 
@@ -61,38 +61,37 @@ class Window(Gtk.Window):
         self.status_lbl = Gtk.Label(
             label='Press download to start downloading')
 
-        box.append(savepath_button)
-        box.append(self.url_entry)
-        box.append(add_url_button)
-        box.append(self.url_treeview)
-        box.append(download_button)
-        box.append(self.format_dropdown)
-        box.append(self.status_lbl)
+        box.pack_start(savepath_button, False, False, 0)
+        box.pack_start(self.url_entry, False, False, 0)
+        box.pack_start(add_url_button, False, False, 0)
+        box.pack_start(self.url_treeview, True, True, 0)
+        box.pack_start(download_button, False, False, 0)
+        box.pack_start(self.format_dropdown, False, False, 0)
+        box.pack_start(self.status_lbl, False, False, 0)
 
-        self.set_child(box)
-        self.present()
+        self.add(box)
+        self.show_all()
         self.connect('hook', self.handle_hook)
 
     def add_url(self, _button):
         text: str = self.url_entry.get_text()
         urls: List[str] = text.splitlines()
         for url in urls:
-            id: str = convert_link(url)
+            video_id: str = convert_link(url)
             if validate_link(url):
                 index = len(self.url_liststore)
-                self.url_liststore.insert_with_values(-1, (0, 1), (url, 'Waiting', ))
+                self.url_liststore.insert_with_valuesv(-1, (0, 1), (url, 'Waiting', ))
                 self.url_entry.set_text('')
-                self.videoid_to_index_dict[id] = index
+                self.videoid_to_index_dict[video_id] = index
 
     def select_savepath(self, _button):
         SelectFolder(parent=self, init_path=self.savepath, select_multiple=False)
 
     def handle_hook(self, _window, data):
         url: str = data['info_dict']['webpage_url']
-        id: str = convert_link(url)
-        index: int = self.videoid_to_index_dict[id]
+        video_id: str = convert_link(url)
+        index: int = self.videoid_to_index_dict[video_id]
         if data['status'] == 'finished':
-            # self.status_lbl.set_text('Done downloading')
             self.url_liststore[index][1] = 'Done downloading'
         elif data['status'] == 'downloading':
             self.url_liststore[index][1] = f'Downloading: {data["_percent_str"]}'
