@@ -14,7 +14,7 @@ class SelectFolder(Gtk.FileChooserDialog):
         self.set_select_multiple(select_multiple=self.select_multiple)
         self.connect('response', self.dialog_response)
         self.set_current_folder(
-            Gio.File.new_for_path(path=init_path)
+            init_path
         )
 
         self.add_buttons(
