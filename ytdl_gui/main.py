@@ -138,8 +138,3 @@ class App(Gtk.Application):
 def main():
     app = App()
     app.run(None)
-
-
-if __name__ == '__main__':
-    main()
-    sys.exit()
