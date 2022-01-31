@@ -2,7 +2,6 @@ import re
 import threading
 from yt_dlp import YoutubeDL
 import yt_dlp
-import hashlib, base64
 
 class YTDL_Controller():
     def __init__(self, window):
