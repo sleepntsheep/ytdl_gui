@@ -114,10 +114,6 @@ class App(Gtk.Application):
 
 
 def main():
-    if sys.platform == 'win32':
-        import certifi_win32
-    os.environ['REQUESTS_CA_BUNDLE'] = certifi_win32.wincerts.where()
-    certifi_win32.generate_pem()
     app = App()
     app.run(None)
 

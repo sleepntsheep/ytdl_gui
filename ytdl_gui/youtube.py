@@ -7,6 +7,7 @@ class YTDL_Controller():
     def __init__(self, window):
         self.ydl_opts = {
             'logger': self.Logger(),
+            'nocheckcertificate': True,
         }
         self.window = window
 
