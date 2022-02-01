@@ -1,5 +1,7 @@
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
 WIDTH = 600
 HEIGHT = 800
 TITLE = 'ytdl_gui'
 APPID = 'org.sheep.youtube-downloader'
-CSSPATH = 'ytdl_gui/css/style.css'
+CSSPATH = f'{dir_path}/css/style.css'
