@@ -6,4 +6,4 @@ GUI for [yt_dlp](https://github.com/yt-dlp/yt-dlp) with gtk
 
 Todo:
 
-[x] make playlist work properly with hook
+- [x] make playlist work properly with hook
